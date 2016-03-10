@@ -1,5 +1,8 @@
 package com.eaglesakura.geo;
 
+import java.util.Arrays;
+import java.util.List;
+
 // Geohash.java
 // Geohash library for Java
 // ported from David Troy's Geohash library for Javascript
@@ -103,6 +106,28 @@ public class Geohash {
 
     public static String encode(double latitude, double longitude) {
         return encode(latitude, longitude, 12);
+    }
+
+    /**
+     * 中心と周辺を返す。
+     * [0] [1] [2]
+     * [3] [lat / lng] [5]
+     * [6] [7] [8]
+     *
+     * @param latitude  緯度
+     * @param longitude 経度
+     * @param length    文字数
+     */
+    public static List<String> encodeWithAdjusts(double latitude, double longitude, int length) {
+        final String center = encode(latitude, longitude, length);
+        final String centerTop = calculateAdjacent(center, TOP);
+        final String centerBottom = calculateAdjacent(center, BOTTOM);
+
+        return Arrays.asList(
+                calculateAdjacent(centerTop, LEFT), centerTop, calculateAdjacent(centerTop, RIGHT),
+                calculateAdjacent(center, LEFT), center, calculateAdjacent(center, RIGHT),
+                calculateAdjacent(centerBottom, LEFT), centerBottom, calculateAdjacent(centerBottom, RIGHT)
+        );
     }
 
     public static String encode(double latitude, double longitude, int length) {

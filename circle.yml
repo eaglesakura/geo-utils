@@ -7,24 +7,28 @@ machine:
   timezone:
     Asia/Tokyo
   java:
-    version: oraclejdk7
+    version: oraclejdk8
   environment:
     ANDROID_HOME: /usr/local/android-sdk-linux
     GRADLE_OPTS: -Xmx4G -Dorg.gradle.daemon=true
     JAVA_OPTS: -Dfile.encoding=UTF-8 -Xms1024m -Xmx4096m -XX:MaxPermSize=2048m
 dependencies:
   override:
-    - echo "Skip dependencies"
+    - sh -c "$(curl -fsSL https://raw.githubusercontent.com/eaglesakura/build-dependencies/master/android-sdk.sh)"
 test:
   override:
     - echo "Skip test task"
 deployment:
-  deploy:
+  canary:
     branch: /^v[0-9]\..*$/
     commands:
+      - rm -rf "/home/ubuntu/.m2"
+      - rm -rf "/home/ubuntu/.ivy2"
+      - rm -rf "/home/ubuntu/.gradle"
       - git clone git@github.com:eaglesakura/maven.git
       - ./script/deploy.sh
       - ./script/circle-maven-commit.sh
+      - ./script/build-sample.sh
   develop:
     branch: develop
     commands:
