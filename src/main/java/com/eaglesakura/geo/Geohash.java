@@ -104,6 +104,7 @@ public class Geohash {
         };
     }
 
+    @Deprecated
     public static String encode(double latitude, double longitude) {
         return encode(latitude, longitude, 12);
     }
@@ -131,6 +132,10 @@ public class Geohash {
     }
 
     public static String encode(double latitude, double longitude, int length) {
+        if (length <= 0) {
+            throw new IllegalArgumentException("length > 0");
+        }
+
         boolean is_even = true;
         double lat[] = new double[3];
         double lon[] = new double[3];
